@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.toker.project.task.mapper.TaskDyPublishMapper">
+
+    <resultMap type="TaskDyPublish" id="TaskDyPublishResult">
+        <result property="id" column="id"/>
+        <result property="taskId" column="task_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="itemId" column="item_id"/>
+        <result property="status" column="status"/>
+        <result property="activityId" column="activity_id"/>
+        <result property="videoPath" column="video_path"/>
+        <result property="diggCount" column="digg_count"/>
+        <result property="downloadCount" column="download_count"/>
+        <result property="forwardCount" column="forward_count"/>
+        <result property="playCount" column="play_count"/>
+        <result property="shareCount" column="share_count"/>
+        <result property="commentCount" column="comment_count"/>
+        <result property="openId" column="open_id"/>
+    </resultMap>
+
+    <sql id="selectTaskDyPublishVo">
+        select id, task_id, open_id,create_time, item_id, status, activity_id, video_path, digg_count, download_count,
+        forward_count, play_count, share_count, comment_count from task_dy_publish
+    </sql>
+
+    <select id="selectTaskDyPublishList" parameterType="TaskDyPublish" resultMap="TaskDyPublishResult">
+        <include refid="selectTaskDyPublishVo"/>
+        <where>
+            <if test="taskId != null ">and task_id = #{taskId}</if>
+            <if test="itemId != null  and itemId != ''">and item_id = #{itemId}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="activityId != null ">and activity_id = #{activityId}</if>
+            <if test="videoPath != null  and videoPath != ''">and video_path = #{videoPath}</if>
+            <if test="diggCount != null ">and digg_count = #{diggCount}</if>
+            <if test="downloadCount != null ">and download_count = #{downloadCount}</if>
+            <if test="forwardCount != null ">and forward_count = #{forwardCount}</if>
+            <if test="playCount != null ">and play_count = #{playCount}</if>
+            <if test="shareCount != null ">and share_count = #{shareCount}</if>
+            <if test="commentCount != null ">and comment_count = #{commentCount}</if>
+        </where>
+    </select>
+
+    <select id="selectTaskDyPublishById" parameterType="Long" resultMap="TaskDyPublishResult">
+        <include refid="selectTaskDyPublishVo"/>
+        where id = #{id}
+    </select>
+
+    <!--查询播放数-->
+    <select id="getPlayCount" parameterType="PublishTask" resultType="Long">
+        select IFNULL(sum(play_count),0) from task_dy_publish p
+        left join publish_task t on p.task_id = t.id
+        left join mer_coupon_activity a on t.activity_id = a.id
+        <where>
+            <if test="merchantId != null ">and a.merchant_id = #{merchantId}</if>
+        </where>
+    </select>
+    <!--查询点赞数-->
+    <select id="getDiggCount" parameterType="PublishTask" resultType="Long">
+        select IFNULL(sum(digg_count),0) from task_dy_publish p
+        left join publish_task t on p.task_id = t.id
+        left join mer_coupon_activity a on t.activity_id = a.id
+        <where>
+            <if test="merchantId != null ">and a.merchant_id = #{merchantId}</if>
+        </where>
+    </select>
+    <!--查询评论数-->
+    <select id="getCommentCount" parameterType="PublishTask" resultType="Long">
+        select IFNULL(sum(comment_count),0) from task_dy_publish p
+        left join publish_task t on p.task_id = t.id
+        left join mer_coupon_activity a on t.activity_id = a.id
+        <where>
+            <if test="merchantId != null ">and a.merchant_id = #{merchantId}</if>
+        </where>
+    </select>
+    <insert id="insertTaskDyPublish" parameterType="TaskDyPublish" useGeneratedKeys="true" keyProperty="id">
+        insert into task_dy_publish
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">task_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="itemId != null">item_id,</if>
+            <if test="status != null">status,</if>
+            <if test="activityId != null">activity_id,</if>
+            <if test="videoPath != null">video_path,</if>
+            <if test="diggCount != null">digg_count,</if>
+            <if test="downloadCount != null">download_count,</if>
+            <if test="forwardCount != null">forward_count,</if>
+            <if test="playCount != null">play_count,</if>
+            <if test="shareCount != null">share_count,</if>
+            <if test="commentCount != null">comment_count,</if>
+            <if test="openId != null">open_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">#{taskId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="itemId != null">#{itemId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="activityId != null">#{activityId},</if>
+            <if test="videoPath != null">#{videoPath},</if>
+            <if test="diggCount != null">#{diggCount},</if>
+            <if test="downloadCount != null">#{downloadCount},</if>
+            <if test="forwardCount != null">#{forwardCount},</if>
+            <if test="playCount != null">#{playCount},</if>
+            <if test="shareCount != null">#{shareCount},</if>
+            <if test="commentCount != null">#{commentCount},</if>
+            <if test="openId != null">#{openId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTaskDyPublish" parameterType="TaskDyPublish">
+        update task_dy_publish
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskId != null">task_id = #{taskId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="itemId != null">item_id = #{itemId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="activityId != null">activity_id = #{activityId},</if>
+            <if test="videoPath != null">video_path = #{videoPath},</if>
+            <if test="diggCount != null">digg_count = #{diggCount},</if>
+            <if test="downloadCount != null">download_count = #{downloadCount},</if>
+            <if test="forwardCount != null">forward_count = #{forwardCount},</if>
+            <if test="playCount != null">play_count = #{playCount},</if>
+            <if test="shareCount != null">share_count = #{shareCount},</if>
+            <if test="commentCount != null">comment_count = #{commentCount},</if>
+            <if test="openId != null">open_id = #{openId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTaskDyPublishById" parameterType="Long">
+        delete from task_dy_publish where id = #{id}
+    </delete>
+
+    <delete id="deleteTaskDyPublishByIds" parameterType="String">
+        delete from task_dy_publish where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

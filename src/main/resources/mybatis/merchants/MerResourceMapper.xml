@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.toker.project.merchants.mapper.MerResourceMapper">
+    <resultMap type="MerResource" id="MerResourceResult">
+        <result property="id" column="id"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="name" column="name"/>
+        <result property="groupId" column="group_id"/>
+        <result property="resourceType" column="resource_type"/>
+        <result property="resourceUrl" column="resource_url"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectMerResourceVo">
+        select r.id,
+               r.merchant_id,
+               r.name,
+               r.group_id,
+               r.resource_type,
+               r.resource_url,
+               r.create_by,
+               r.create_time,
+               r.update_by,
+               r.update_time,
+               r.remark,
+            g.group_name as groupName
+        from mer_resource r
+        left join  mer_resource_group g on g.id = r.group_id
+    </sql>
+
+    <select id="selectMerResourceList" parameterType="MerResource" resultMap="MerResourceResult">
+        <include refid="selectMerResourceVo"/>
+        <where>
+            <if test="merchantId != null ">
+                and r.merchant_id = #{merchantId}
+            </if>
+            <if test="name != null  and name != ''">
+                and r.name like concat('%', #{name}, '%')
+            </if>
+            <if test="groupId != null ">
+                and r.group_id = #{groupId}
+            </if>
+            <if test="resourceType != null ">
+                and r.resource_type = #{resourceType}
+            </if>
+        </where>
+        order by r.id desc
+    </select>
+
+    <select id="selectMerResourceById" parameterType="Long" resultMap="MerResourceResult">
+        <include refid="selectMerResourceVo"/>
+        where r.id = #{id}
+    </select>
+
+    <insert id="insertMerResource" parameterType="MerResource" useGeneratedKeys="true" keyProperty="id">
+        insert into mer_resource
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="merchantId != null">
+                merchant_id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="groupId != null">
+                group_id,
+            </if>
+            <if test="resourceType != null">
+                resource_type,
+            </if>
+            <if test="resourceUrl != null and resourceUrl != ''">
+                resource_url,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="merchantId != null">
+                #{merchantId},
+            </if>
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="groupId != null">
+                #{groupId},
+            </if>
+            <if test="resourceType != null">
+                #{resourceType},
+            </if>
+            <if test="resourceUrl != null and resourceUrl != ''">
+                #{resourceUrl},
+            </if>
+            <if test="createBy != null">
+                #{createBy},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="remark != null">
+                #{remark},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateMerResource" parameterType="MerResource">
+        update mer_resource
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="merchantId != null">
+                merchant_id = #{merchantId},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="groupId != null">
+                group_id = #{groupId},
+            </if>
+            <if test="resourceType != null">
+                resource_type = #{resourceType},
+            </if>
+            <if test="resourceUrl != null and resourceUrl != ''">
+                resource_url = #{resourceUrl},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMerResourceById" parameterType="Long">
+        delete
+        from mer_resource
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteMerResourceByIds" parameterType="String">
+        delete from mer_resource where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getRandomAudio"  parameterType="Long" resultMap="MerResourceResult">
+        <include refid="selectMerResourceVo"/>
+        where r.merchant_id=#{merchantId}
+        and r.group_id = 15
+        ORDER BY rand() limit 0,1
+    </select>
+
+    <select id="getRandMerReource" parameterType="Long" resultMap="MerResourceResult">
+        <include refid="selectMerResourceVo"/>
+        where r.merchant_id=#{merchantId}
+        and r.group_id = #{groupId}
+        <!-- and r.id not in (select resource_id from mer_activity_video where activity_id = #{activityId} )-->
+        ORDER BY rand() limit 0,1
+    </select>
+</mapper>

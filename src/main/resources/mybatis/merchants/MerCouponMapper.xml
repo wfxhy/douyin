@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.toker.project.merchants.mapper.MerCouponMapper">
+
+    <resultMap type="MerCoupon" id="MerCouponResult">
+        <result property="id" column="id"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="title" column="title"/>
+        <result property="discount" column="discount"/>
+        <result property="startTime" column="start_time"/>
+        <result property="overTime" column="end_time"/>
+        <result property="collectionTimes" column="collection_times"/>
+        <result property="coverImg" column="cover_img"/>
+        <result property="coverInfo" column="cover_info"/>
+        <result property="useNotice" column="use_notice"/>
+        <result property="amount" column="amount"/>
+        <result property="minCost" column="min_cost"/>
+        <result property="type" column="type"/>
+        <result property="quantity" column="quantity"/>
+        <result property="goodsType" column="goods_type"/>
+        <result property="goodsValue" column="goods_value"/>
+        <result property="timeType" column="time_type"/>
+        <result property="days" column="days"/>
+        <result property="status" column="status"/>
+        <result property="merchantName" column="merchant_name"/>
+    </resultMap>
+
+    <sql id="selectMerCouponVo">
+        select c.id, c.merchant_id, c.title, c.discount, c.start_time, c.end_time, c.collection_times, c.cover_img,
+        c.cover_info,
+        c.use_notice, c.amount, c.min_cost, c.type, c.quantity, c.goods_type, c.goods_value, c.time_type, c.days,
+        c.status,
+        m.name as merchant_name
+        from mer_coupon c left join merchants m on c.merchant_id = m.id
+    </sql>
+
+    <select id="selectMerCouponList" parameterType="MerCoupon" resultMap="MerCouponResult">
+        <include refid="selectMerCouponVo"/>
+        <where>
+            1=1
+            <if test="merchantId != null ">and c.merchant_id = #{merchantId}</if>
+            <if test="type != null ">and c.type = #{type}</if>
+            <if test="status != null ">and c.status = #{status}</if>
+        </where>
+        <!-- 数据范围过滤 -->
+       order by c.id desc
+    </select>
+
+    <select id="selectMerCouponById" parameterType="Long" resultMap="MerCouponResult">
+        <include refid="selectMerCouponVo"/>
+        where c.id = #{id}
+    </select>
+
+    <insert id="insertMerCoupon" parameterType="MerCoupon" useGeneratedKeys="true" keyProperty="id">
+        insert into mer_coupon
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="merchantId != null">merchant_id,</if>
+            <if test="title != null and title != ''">title,</if>
+            <if test="discount != null">discount,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="overTime != null">end_time,</if>
+            <if test="collectionTimes != null">collection_times,</if>
+            <if test="coverImg != null">cover_img,</if>
+            <if test="coverInfo != null">cover_info,</if>
+            <if test="useNotice != null">use_notice,</if>
+            <if test="amount != null">amount,</if>
+            <if test="minCost != null">min_cost,</if>
+            <if test="type != null">type,</if>
+            <if test="quantity != null">quantity,</if>
+            <if test="goodsType != null">goods_type,</if>
+            <if test="goodsValue != null">goods_value,</if>
+            <if test="timeType != null">time_type,</if>
+            <if test="days != null">days,</if>
+            <if test="status != null">status,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="merchantId != null">#{merchantId},</if>
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="discount != null">#{discount},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="overTime != null">#{overTime},</if>
+            <if test="collectionTimes != null">#{collectionTimes},</if>
+            <if test="coverImg != null">#{coverImg},</if>
+            <if test="coverInfo != null">#{coverInfo},</if>
+            <if test="useNotice != null">#{useNotice},</if>
+            <if test="amount != null">#{amount},</if>
+            <if test="minCost != null">#{minCost},</if>
+            <if test="type != null">#{type},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="goodsType != null">#{goodsType},</if>
+            <if test="goodsValue != null">#{goodsValue},</if>
+            <if test="timeType != null">#{timeType},</if>
+            <if test="days != null">#{days},</if>
+            <if test="status != null">#{status},</if>
+        </trim>
+    </insert>
+
+    <update id="updateMerCoupon" parameterType="MerCoupon">
+        update mer_coupon
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="merchantId != null">merchant_id = #{merchantId},</if>
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="discount != null">discount = #{discount},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="overTime != null">end_time = #{overTime},</if>
+            <if test="collectionTimes != null">collection_times = #{collectionTimes},</if>
+            <if test="coverImg != null">cover_img = #{coverImg},</if>
+            <if test="coverInfo != null">cover_info = #{coverInfo},</if>
+            <if test="useNotice != null">use_notice = #{useNotice},</if>
+            <if test="amount != null">amount = #{amount},</if>
+            <if test="minCost != null">min_cost = #{minCost},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="goodsType != null">goods_type = #{goodsType},</if>
+            <if test="goodsValue != null">goods_value = #{goodsValue},</if>
+            <if test="timeType != null">time_type = #{timeType},</if>
+            <if test="days != null">days = #{days},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMerCouponById" parameterType="Long">
+        delete from mer_coupon where id = #{id}
+    </delete>
+
+    <delete id="deleteMerCouponByIds" parameterType="String">
+        delete from mer_coupon where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--下架优惠券-->
+    <update id="offlineMerCoupon">
+        update mer_coupon set status = 3 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+</mapper>

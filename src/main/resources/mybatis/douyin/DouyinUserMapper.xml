@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.toker.project.douyin.mapper.DouyinUserMapper">
+    
+    <resultMap type="DouyinUser" id="DouyinUserResult">
+        <result property="id"    column="id"    />
+        <result property="nickname"    column="nickname"    />
+        <result property="openId"    column="open_id"    />
+        <result property="avatar"    column="avatar"    />
+        <result property="gender"    column="gender"    />
+        <result property="province"    column="province"    />
+        <result property="city"    column="city"    />
+        <result property="country"    column="country"    />
+        <result property="unionId"    column="union_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="merchantId"    column="merchant_id"    />
+        <result property="activityId"    column="activity_id"    />
+    </resultMap>
+
+    <sql id="selectDouyinUserVo">
+        select id, nickname, open_id, avatar, gender, province, city, country, union_id, create_by, create_time, update_by, update_time, remark,merchant_id,activity_id from douyin_user
+    </sql>
+
+    <select id="selectDouyinUserList" parameterType="DouyinUser" resultMap="DouyinUserResult">
+        <include refid="selectDouyinUserVo"/>
+        <where>  
+            <if test="gender != null  and gender != ''"> and gender = #{gender}</if>
+            <if test="province != null  and province != ''"> and province = #{province}</if>
+            <if test="city != null  and city != ''"> and city = #{city}</if>
+            <if test="country != null  and country != ''"> and country = #{country}</if>
+            <if test="unionId != null  and unionId != ''"> and union_id = #{unionId}</if>
+            <if test="openId != null  and openId != ''"> and open_id = #{openId}</if>
+            <if test="merchantId != null "> and merchant_id = #{merchantId}</if>
+            <if test="activityId != null "> and activity_id = #{activityId}</if>
+        </where>
+        order by create_time desc
+    </select>
+    
+    <select id="selectDouyinUserById" parameterType="Long" resultMap="DouyinUserResult">
+        <include refid="selectDouyinUserVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectDouyinUserByOpenId" parameterType="String" resultMap="DouyinUserResult">
+        <include refid="selectDouyinUserVo"/>
+        where open_id = #{openId}
+    </select>
+
+    <insert id="insertDouyinUser" parameterType="DouyinUser" useGeneratedKeys="true" keyProperty="id">
+        insert into douyin_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="nickname != null">nickname,</if>
+            <if test="openId != null">open_id,</if>
+            <if test="avatar != null">avatar,</if>
+            <if test="gender != null">gender,</if>
+            <if test="province != null">province,</if>
+            <if test="city != null">city,</if>
+            <if test="country != null">country,</if>
+            <if test="unionId != null">union_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="merchantId != null">merchant_id,</if>
+            <if test="activityId != null ">activity_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="nickname != null">#{nickname},</if>
+            <if test="openId != null">#{openId},</if>
+            <if test="avatar != null">#{avatar},</if>
+            <if test="gender != null">#{gender},</if>
+            <if test="province != null">#{province},</if>
+            <if test="city != null">#{city},</if>
+            <if test="country != null">#{country},</if>
+            <if test="unionId != null">#{unionId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="merchantId != null">#{merchantId},</if>
+            <if test="activityId != null ">#{activityId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDouyinUser" parameterType="DouyinUser">
+        update douyin_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="nickname != null">nickname = #{nickname},</if>
+            <if test="openId != null">open_id = #{openId},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="province != null">province = #{province},</if>
+            <if test="city != null">city = #{city},</if>
+            <if test="country != null">country = #{country},</if>
+            <if test="unionId != null">union_id = #{unionId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="merchantId != null">merchant_id = #{merchantId},</if>
+            <if test="activityId != null">activity_id = #{activityId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+    <update id="updateDouyinUserByOpenId" parameterType="DouyinUser">
+        update douyin_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="nickname != null">nickname = #{nickname},</if>
+            <if test="openId != null">open_id = #{openId},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="province != null">province = #{province},</if>
+            <if test="city != null">city = #{city},</if>
+            <if test="country != null">country = #{country},</if>
+            <if test="unionId != null">union_id = #{unionId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="merchantId != null">merchant_id = #{merchantId},</if>
+            <if test="activityId != null">activity_id = #{activityId},</if>
+        </trim>
+        where open_id = #{openId}
+    </update>
+
+    <delete id="deleteDouyinUserById" parameterType="Long">
+        delete from douyin_user where id = #{id}
+    </delete>
+
+    <delete id="deleteDouyinUserByIds" parameterType="String">
+        delete from douyin_user where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

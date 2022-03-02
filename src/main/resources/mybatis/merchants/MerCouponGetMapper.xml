@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.toker.project.merchants.mapper.MerCouponGetMapper">
+
+    <resultMap type="MerCouponGet" id="MerCouponGetResult">
+        <result property="id" column="id"/>
+        <result property="couponId" column="coupon_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="couponCode" column="coupon_code"/>
+        <result property="getType" column="get_type"/>
+        <result property="createTime" column="create_time"/>
+        <result property="beginDate" column="begin_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="useStatus" column="use_status"/>
+        <result property="useTime" column="use_time"/>
+        <result property="type" column="type"/>
+        <result property="amount" column="amount"/>
+        <result property="minCost" column="min_cost"/>
+        <result property="discount" column="discount"/>
+        <result property="merchantName" column="merchant_name"/>
+        <result property="title" column="title"/>
+        <result property="nickname" column="nickname"/>
+        <result property="activityId" column="activity_id"/>
+    </resultMap>
+
+    <sql id="selectMerCouponGetVo">
+        SELECT
+        g.id,
+        g.coupon_id,
+        g.user_id,
+        g.coupon_code,
+        g.get_type,
+        g.create_time,
+        g.begin_date,
+        g.end_date,
+        g.use_status,
+        g.use_time,
+        c.type,
+        c.amount,
+        c.min_cost,
+        c.discount,
+        m.dept_name AS merchant_name,
+        c.title,
+        u.nickname
+        FROM
+        mer_coupon_get g
+        LEFT JOIN mer_coupon c ON g.coupon_id = c.id
+        LEFT JOIN sys_dept m ON c.merchant_id = m.dept_id
+        LEFT JOIN douyin_user u ON g.user_id = u.id
+    </sql>
+
+    <select id="selectMerCouponGetList" parameterType="MerCouponGet" resultMap="MerCouponGetResult">
+        <include refid="selectMerCouponGetVo"/>
+        <where>
+            1=1
+            <if test="activityId != null ">and g.activity_id = #{activityId}</if>
+            <if test="couponId != null ">and g.coupon_id = #{couponId}</if>
+            <if test="userId != null ">and g.user_id = #{userId}</if>
+            <if test="couponCode != null  and couponCode != ''">and g.coupon_code = #{couponCode}</if>
+            <if test="createTime != null ">and g.create_time = #{createTime}</if>
+            <if test="useStatus != null ">and g.use_status = #{useStatus}</if>
+            <if test="useTime != null ">and g.use_time = #{useTime}</if>
+            <if test="merchantId != null ">and c.merchant_id = #{merchantId}</if>
+        </where>
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+        order by g.create_time desc
+    </select>
+
+    <select id="selectMerCouponGetById" parameterType="Long" resultMap="MerCouponGetResult">
+        <include refid="selectMerCouponGetVo"/>
+        where g.id = #{id}
+    </select>
+    <!--根据优惠券码查询优惠券-->
+    <select id="selectMerCouponGetByCouponCode" parameterType="String" resultMap="MerCouponGetResult">
+        <include refid="selectMerCouponGetVo"/>
+        where g.coupon_code = #{couponCode}
+    </select>
+
+
+    <!--首页看板统计-->
+    <select id="selectMerCouponGetCount" parameterType="MerCouponGet" resultType="Long">
+        select count(*)
+        from mer_coupon_get g
+        left join mer_coupon c on g.coupon_id = c.id
+        <where>
+            1 = 1
+            <if test="merchantId != null">and c.merchant_id = #{merchantId}</if>
+            <if test="type != null and type != '' ">and c.type = #{type}</if>
+            <if test="activityId != null">and g.activity_id = #{activityId}</if>
+            <if test="useStatus != null">and g.use_status = #{useStatus}</if>
+            <if test="beginTime != null and beginTime != '' ">and g.create_time <![CDATA[>=]]> #{beginTime}</if>
+            <if test="endTime != null and endTime != '' ">and g.create_time <![CDATA[<=]]> #{endTime}</if>
+        </where>
+    </select>
+
+    <!--首页看板统计：优惠券核销总数-->
+    <select id="selectMerCouponCheckCount" parameterType="MerCouponGet" resultType="Long">
+        select count(*)
+        from mer_coupon_get g
+        left join mer_coupon c on g.coupon_id = c.id
+        <where>
+            1 = 1
+            <if test="merchantId != null">and c.merchant_id = #{merchantId}</if>
+            <if test="activityId != null">and g.activity_id = #{activityId}</if>
+            <if test="useStatus != null">and g.use_status = #{useStatus}</if>
+            <if test="beginTime != null and beginTime != '' ">and g.use_time <![CDATA[>=]]> #{beginTime}</if>
+            <if test="endTime != null and endTime != '' ">and g.use_time <![CDATA[<=]]> #{endTime}</if>
+        </where>
+    </select>
+
+
+    <insert id="insertMerCouponGet" parameterType="MerCouponGet" useGeneratedKeys="true" keyProperty="id">
+        insert into mer_coupon_get
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="couponId != null">coupon_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="couponCode != null and couponCode != ''">coupon_code,</if>
+            <if test="getType != null">get_type,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="beginDate != null">begin_date,</if>
+            <if test="endDate != null">end_date,</if>
+            <if test="useStatus != null">use_status,</if>
+            <if test="useTime != null">use_time,</if>
+            <if test="activityId != null">activity_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="couponId != null">#{couponId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="couponCode != null and couponCode != ''">#{couponCode},</if>
+            <if test="getType != null">#{getType},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="beginDate != null">#{beginDate},</if>
+            <if test="endDate != null">#{endDate},</if>
+            <if test="useStatus != null">#{useStatus},</if>
+            <if test="useTime != null">#{useTime},</if>
+            <if test="activityId != null ">#{activityId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateMerCouponGet" parameterType="MerCouponGet">
+        update mer_coupon_get
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="couponId != null">coupon_id = #{couponId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="couponCode != null and couponCode != ''">coupon_code = #{couponCode},</if>
+            <if test="getType != null">get_type = #{getType},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="beginDate != null">begin_date = #{beginDate},</if>
+            <if test="endDate != null">end_date = #{endDate},</if>
+            <if test="useStatus != null">use_status = #{useStatus},</if>
+            <if test="useTime != null">use_time = #{useTime},</if>
+            <if test="activityId != null">activity_id = #{activityId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMerCouponGetById" parameterType="Long">
+        delete from mer_coupon_get where id = #{id}
+    </delete>
+
+    <delete id="deleteMerCouponGetByIds" parameterType="String">
+        delete from mer_coupon_get where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

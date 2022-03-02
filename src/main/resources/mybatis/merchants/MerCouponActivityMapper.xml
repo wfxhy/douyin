@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.toker.project.merchants.mapper.MerCouponActivityMapper">
+
+    <resultMap type="MerCouponActivity" id="MerCouponActivityResult">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="beginDate" column="begin_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="joinTimes" column="join_times"/>
+        <result property="actityType" column="actity_type"/>
+        <result property="laterSend" column="later_send"/>
+        <result property="imgUrl" column="img_url"/>
+        <result property="status" column="status"/>
+        <result property="videoUrl" column="video_url"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="couponId" column="coupon_id"/>
+        <result property="douyinTitle" column="douyin_title"/>
+        <result property="merchantName" column="merchant_name"/>
+        <result property="forwardChannel" column="forward_channel"/>
+        <result property="videoSource" column="video_source"/>
+        <result property="resourceGroupId" column="resource_group_id"/>
+        <result property="videoTitle" column="video_title"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+        <result property="redirectType" column="redirect_type"/>
+    </resultMap>
+
+    <sql id="selectMerCouponActivityVo">
+        select a.id, a.title, a.description, a.begin_date, a.end_date, a.join_times, a.actity_type, a.later_send,
+        a.img_url, a.status, a.video_url, a.merchant_id,
+        a.coupon_id,a.douyin_title,a.forward_channel,a.video_source,a.resource_group_id,
+        a.video_title,
+        a.create_by, a.create_time,a.remark,a.update_by,a.update_time,
+        m.name as merchant_name,a.redirect_type
+        from mer_coupon_activity a left join merchants m on a.merchant_id = m.id
+    </sql>
+
+    <select id="selectMerCouponActivityList" parameterType="MerCouponActivity" resultMap="MerCouponActivityResult">
+        <include refid="selectMerCouponActivityVo"/>
+        <where>
+            1=1
+            <if test="beginDate != null ">and a.begin_date = #{beginDate}</if>
+            <if test="endDate != null ">and a.end_date = #{endDate}</if>
+            <if test="status != null ">and a.status = #{status}</if>
+            <if test="merchantId != null ">and a.merchant_id = #{merchantId}</if>
+            <if test="actityType != null ">and a.actity_type = #{actityType}</if>
+        </where>
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+        order by a.create_time,a.update_time desc
+    </select>
+
+    <select id="selectMerCouponActivityById" parameterType="Long" resultMap="MerCouponActivityResult">
+        <include refid="selectMerCouponActivityVo"/>
+        where a.id = #{id}
+    </select>
+
+    <select id="selectMerCouponActivityCount" parameterType="MerCouponActivity" resultType="Long">
+        select count(*) from mer_coupon_activity a
+        <where>
+            1=1
+            <if test="beginDate != null ">and a.begin_date = #{beginDate}</if>
+            <if test="endDate != null ">and a.end_date = #{endDate}</if>
+            <if test="status != null ">and a.status = #{status}</if>
+            <if test="merchantId != null ">and a.merchant_id = #{merchantId}</if>
+        </where>
+    </select>
+
+
+    <insert id="insertMerCouponActivity" parameterType="MerCouponActivity" useGeneratedKeys="true" keyProperty="id">
+        insert into mer_coupon_activity
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">title,</if>
+            <if test="description != null and description != ''">description,</if>
+            <if test="beginDate != null">begin_date,</if>
+            <if test="endDate != null">end_date,</if>
+            <if test="joinTimes != null">join_times,</if>
+            <if test="actityType != null">actity_type,</if>
+            <if test="laterSend != null">later_send,</if>
+            <if test="imgUrl != null and imgUrl != ''">img_url,</if>
+            <if test="status != null">status,</if>
+            <if test="videoUrl != null and videoUrl != ''">video_url,</if>
+            <if test="merchantId != null">merchant_id,</if>
+            <if test="couponId != null">coupon_id,</if>
+            <if test="douyinTitle != null">douyin_title,</if>
+            <if test="forwardChannel != null">forward_channel,</if>
+            <if test="videoSource != null">video_source,</if>
+            <if test="resourceGroupId != null  and resourceGroupId != ''">resource_group_id,</if>
+            <if test="videoTitle != null and videoTitle != ''">video_title,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+            <if test="redirectType != null">redirect_type,</if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="description != null and description != ''">#{description},</if>
+            <if test="beginDate != null">#{beginDate},</if>
+            <if test="endDate != null">#{endDate},</if>
+            <if test="joinTimes != null">#{joinTimes},</if>
+            <if test="actityType != null">#{actityType},</if>
+            <if test="laterSend != null">#{laterSend},</if>
+            <if test="imgUrl != null and imgUrl != ''">#{imgUrl},</if>
+            <if test="status != null">#{status},</if>
+            <if test="videoUrl != null and videoUrl != ''">#{videoUrl},</if>
+            <if test="merchantId != null">#{merchantId},</if>
+            <if test="couponId != null">#{couponId},</if>
+            <if test="douyinTitle != null">#{douyinTitle},</if>
+            <if test="forwardChannel != null">#{forwardChannel},</if>
+            <if test="videoSource != null">#{videoSource},</if>
+            <if test="resourceGroupId != null and resourceGroupId != ''">#{resourceGroupId},</if>
+            <if test="videoTitle != null  and videoTitle != ''">#{videoTitle},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            <if test="redirectType != null">#{redirectType},</if>
+            sysdate()
+        </trim>
+    </insert>
+
+    <update id="updateMerCouponActivity" parameterType="MerCouponActivity">
+        update mer_coupon_activity
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
+            <if test="beginDate != null">begin_date = #{beginDate},</if>
+            <if test="endDate != null">end_date = #{endDate},</if>
+            <if test="joinTimes != null">join_times = #{joinTimes},</if>
+            <if test="actityType != null">actity_type = #{actityType},</if>
+            <if test="laterSend != null">later_send = #{laterSend},</if>
+            <if test="imgUrl != null and imgUrl != ''">img_url = #{imgUrl},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="videoUrl != null and videoUrl != ''">video_url = #{videoUrl},</if>
+            <if test="merchantId != null">merchant_id = #{merchantId},</if>
+            <if test="couponId != null">coupon_id = #{couponId},</if>
+            <if test="douyinTitle != null">douyin_title = #{douyinTitle},</if>
+            <if test="forwardChannel != null">forward_channel = #{forwardChannel},</if>
+            <if test="videoSource != null">video_source = #{videoSource},</if>
+            <if test="resourceGroupId != null  and resourceGroupId != ''">resource_group_id = #{resourceGroupId},</if>
+            <if test="videoTitle != null  and videoTitle != ''">video_title = #{videoTitle},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="redirectType != null">redirect_type=#{redirectType},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMerCouponActivityById" parameterType="Long">
+        delete from mer_coupon_activity where id = #{id}
+    </delete>
+
+    <delete id="deleteMerCouponActivityByIds" parameterType="String">
+        delete from mer_coupon_activity where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--下架优惠券活动-->
+    <update id="offilneMerCouponActivity" parameterType="MerCouponActivity">
+        update mer_coupon_activity set status = 3 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    <!--活动上线-->
+    <update id="onlineMerCouponActivity">
+        update mer_coupon_activity set status = 2 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

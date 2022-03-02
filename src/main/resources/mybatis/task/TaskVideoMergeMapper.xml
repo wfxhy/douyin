@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.toker.project.task.mapper.TaskVideoMergeMapper">
+
+    <resultMap type="TaskVideoMerge" id="TaskVideoMergeResult">
+        <result property="id" column="id"/>
+        <result property="taskId" column="task_id"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="resourceIds" column="resource_ids" jdbcType="VARCHAR"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="errorMsg" column="error_msg"/>
+    </resultMap>
+
+    <sql id="selectTaskVideoMergeVo">
+        select id, task_id,merchantId, resource_ids, status, create_time, error_msg from task_video_merge
+    </sql>
+
+    <select id="selectTaskVideoMergeList" parameterType="TaskVideoMerge" resultMap="TaskVideoMergeResult">
+        <include refid="selectTaskVideoMergeVo"/>
+        <where>
+            <if test="taskId != null ">and task_id = #{taskId}</if>
+            <if test="resourceIds != null  and resourceIds != ''">and resource_ids = #{resourceIds}</if>
+            <if test="status != null  and status != ''">and status = #{status}</if>
+            <if test="errorMsg != null  and errorMsg != ''">and error_msg = #{errorMsg}</if>
+        </where>
+    </select>
+
+    <select id="selectTaskVideoMergeById" parameterType="Long" resultMap="TaskVideoMergeResult">
+        <include refid="selectTaskVideoMergeVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="getMergeResourceIds" parameterMap="getMergeResourceIdsMap" statementType="CALLABLE">
+        {call get_merge_resource(
+        #{activityId,mode=IN},#{resourceIds,mode=OUT,jdbcType=VARCHAR})}
+    </select>
+    <parameterMap id="getMergeResourceIdsMap" type="java.util.Map">
+        <parameter property="activityId" jdbcType="BIGINT" mode="IN"></parameter>
+        <parameter property="resourceIds" jdbcType="VARCHAR" mode="OUT"></parameter>
+    </parameterMap>
+
+
+    <insert id="insertTaskVideoMerge" parameterType="TaskVideoMerge" useGeneratedKeys="true" keyProperty="id">
+        insert into task_video_merge
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">task_id,</if>
+            <if test="merchantId != null">merchant_id,</if>
+            <if test="resourceIds != null">resource_ids,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="errorMsg != null">error_msg,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">#{taskId},</if>
+            <if test="merchantId != null">#{merchantId},</if>
+            <if test="resourceIds != null">#{resourceIds},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="errorMsg != null">#{errorMsg},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTaskVideoMerge" parameterType="TaskVideoMerge">
+        update task_video_merge
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskId != null">task_id = #{taskId},</if>
+            <if test="merchantId != null">merchant_id=#{merchantId},</if>
+            <if test="resourceIds != null">resource_ids = #{resourceIds},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="errorMsg != null">error_msg = #{errorMsg},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTaskVideoMergeById" parameterType="Long">
+        delete from task_video_merge where id = #{id}
+    </delete>
+
+    <delete id="deleteTaskVideoMergeByIds" parameterType="String">
+        delete from task_video_merge where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

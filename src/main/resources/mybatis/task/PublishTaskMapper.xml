@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.toker.project.task.mapper.PublishTaskMapper">
+
+    <resultMap type="PublishTask" id="PublishTaskResult">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="status" column="status"/>
+        <result property="activityId" column="activity_id"/>
+        <result property="activityTitle" column="activity_title"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="nickname" column="nickname"/>
+    </resultMap>
+
+    <sql id="selectPublishTaskVo">
+        select t.id, t.user_id, t.create_time, t.update_time, t.status, t.activity_id,a.title as
+        activity_title,d.dept_name ,u.nickname
+        from publish_task t
+        left join mer_coupon_activity a on t.activity_id = a.id
+        left join sys_dept d on a.merchant_id = d.dept_id
+        left join douyin_user u on t.user_id = u.id
+    </sql>
+
+    <select id="selectPublishTaskList" parameterType="PublishTask" resultMap="PublishTaskResult">
+        <include refid="selectPublishTaskVo"/>
+        <where>
+            <if test="userId != null ">and t.user_id = #{userId}</if>
+            <if test="status != null ">and t.status = #{status}</if>
+            <if test="activityId != null ">and t.activity_id = #{activityId}</if>
+            <if test="merchantId != null ">and a.merchant_id = #{merchantId}</if>
+        </where>
+    </select>
+
+    <select id="selectPublishTaskById" parameterType="Long" resultMap="PublishTaskResult">
+        <include refid="selectPublishTaskVo"/>
+        where t.id = #{id}
+    </select>
+
+    <!--查询参与人数-->
+    <select id="getJoinCount" parameterType="PublishTask" resultType="Long">
+        select count(*) from publish_task t
+        left join mer_coupon_activity a on t.activity_id = a.id
+        <where>
+            <if test="merchantId != null ">and a.merchant_id = #{merchantId}</if>
+        </where>
+    </select>
+
+    <insert id="insertPublishTask" parameterType="PublishTask" useGeneratedKeys="true" keyProperty="id">
+        insert into publish_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="status != null">status,</if>
+            <if test="activityId != null">activity_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="status != null">#{status},</if>
+            <if test="activityId != null">#{activityId},</if>
+        </trim>
+    </insert>
+
+    <update id="updatePublishTask" parameterType="PublishTask">
+        update publish_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="activityId != null">activity_id = #{activityId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePublishTaskById" parameterType="Long">
+        delete from publish_task where id = #{id}
+    </delete>
+
+    <delete id="deletePublishTaskByIds" parameterType="String">
+        delete from publish_task where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

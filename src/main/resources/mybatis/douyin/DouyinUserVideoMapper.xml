@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.toker.project.douyin.mapper.DouyinUserVideoMapper">
+    
+    <resultMap type="DouyinUserVideo" id="DouyinUserVideoResult">
+        <result property="id"    column="id"    />
+        <result property="douyinUserId"    column="douyin_user_id"    />
+        <result property="itemId"    column="item_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="status"    column="status"    />
+        <result property="activityId"    column="activity_id"    />
+        <result property="activityTitle"    column="title"    />
+        <result property="merchantId"    column="merchant_id"    />
+        <result property="nickname"    column="nickname"    />
+        <result property="videoPath"    column="video_path"    />
+        <association property="douyinUser" javaType="DouyinUser">
+            <id column="user_id" property="id"/>
+            <result column="nickname" property="nickname"/>
+            <result column="open_id" property="openId"/>
+            <result column="avatar" property="avatar"/>
+            <result column="gender" property="gender"/>
+        </association>
+    </resultMap>
+
+    <sql id="selectDouyinUserVideoVo">
+        select v.id,  v.douyin_user_id, v.item_id,  v.create_time, v.status ,v.activity_id, v.merchant_id ,v.video_path,
+            a.title, u.nickname,u.id as user_id,u.open_id,u.avatar,u.gender
+        from douyin_user_video v
+        left join douyin_user u on v.douyin_user_id=u.id
+        LEFT JOIN sys_dept m ON v.merchant_id = m.dept_id
+        left join mer_coupon_activity a on a.id = v.activity_id
+    </sql>
+
+    <select id="selectDouyinUserVideoList" parameterType="DouyinUserVideo" resultMap="DouyinUserVideoResult">
+        <include refid="selectDouyinUserVideoVo"/>
+        <where>
+            1=1
+            <if test="merchantId != null "> and v.merchant_id = #{merchantId}</if>
+            <if test="activityId != null "> and v.activity_id = #{activityId}</if>
+            <if test="douyinUserId != null "> and douyin_user_id = #{douyinUserId}</if>
+            <if test="itemId != null  and itemId != ''"> and item_id = #{itemId}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+        order by v.create_time desc
+    </select>
+    
+    <select id="selectDouyinUserVideoById" parameterType="Long" resultMap="DouyinUserVideoResult">
+        <include refid="selectDouyinUserVideoVo"/>
+        where v.id = #{id}
+    </select>
+
+    <select id="selectDouyinUserVideoByVideoId" parameterType="String" resultMap="DouyinUserVideoResult">
+        <include refid="selectDouyinUserVideoVo"/>
+        where v.video_id = #{videoId}
+    </select>
+    <select id="selectDouyinUserVideoByItemId" parameterType="String" resultMap="DouyinUserVideoResult">
+        <include refid="selectDouyinUserVideoVo"/>
+        where v.item_id = #{itemId}
+    </select>
+
+
+    <!--首页看板统计-->
+    <select id="selectDouyinUserVideoCount" parameterType="DouyinUserVideo" resultType="Long">
+        select count(*)
+        from douyin_user_video b
+        <where>
+            1 = 1
+            <if test="merchantId != null"> and b.merchant_id = #{merchantId}</if>
+            <if test="activityId != null"> and b.activity_id = #{activityId}</if>
+            <if test="beginTime != null and beginTime != '' "> and b.create_time <![CDATA[>=]]> #{beginTime}</if>
+            <if test="endTime != null and endTime != '' "> and b.create_time <![CDATA[<=]]> #{endTime}</if>
+        </where>
+    </select>
+
+
+    <insert id="insertDouyinUserVideo" parameterType="DouyinUserVideo" useGeneratedKeys="true" keyProperty="id">
+        insert into douyin_user_video
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="douyinUserId != null">douyin_user_id,</if>
+            <if test="itemId != null">item_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="status != null">status,</if>
+            <if test="activityId != null ">activity_id,</if>
+            <if test="merchantId != null ">merchant_id,</if>
+            <if test="videoPath != null  and videoPath!=''">video_path,</if>
+
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="douyinUserId != null">#{douyinUserId},</if>
+            <if test="itemId != null">#{itemId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="status != null">#{status},</if>
+            <if test="activityId != null ">#{activityId},</if>
+            <if test="merchantId != null ">#{merchantId},</if>
+            <if test="videoPath != null  and videoPath!=''">#{videoPath},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDouyinUserVideo" parameterType="DouyinUserVideo">
+        update douyin_user_video
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="douyinUserId != null">douyin_user_id = #{douyinUserId},</if>
+            <if test="itemId != null">item_id = #{itemId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="activityId != null ">activity_id=#{activityId},</if>
+            <if test="merchantId != null ">merchant_id=#{merchantId},</if>
+            <if test="videoPath != null  and videoPath!=''">video_path=#{videoPath},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDouyinUserVideoById" parameterType="Long">
+        delete from douyin_user_video where id = #{id}
+    </delete>
+
+    <delete id="deleteDouyinUserVideoByIds" parameterType="String">
+        delete from douyin_user_video where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>
