@@ -26,7 +26,9 @@ springboot element-ui uni-app
 - 视频带评论
 
 
-![img.png](img.png)
+![image](https://user-images.githubusercontent.com/52625251/201573563-f669b728-071e-49ad-9ada-bdf410ffbb96.png)
+
+
 
 
 #### 说明
