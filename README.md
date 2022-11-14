@@ -25,9 +25,7 @@ springboot element-ui uni-app
 - 背景音乐合成
 - 视频带评论
 
-
-![image](https://user-images.githubusercontent.com/52625251/201573563-f669b728-071e-49ad-9ada-bdf410ffbb96.png)
-
+![image](https://user-images.githubusercontent.com/52625251/201573603-dd4cc57b-c77c-4daa-858e-3fb0b8b1df3b.png)
 
 
 
